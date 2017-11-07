@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Doctor Who Quiz</title>
+
+    <!-- Bootstrap css and my own css -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+    Hello World!
+    <div class="text"></div>
+
+    <script type="text/javascript">
+        var xhr = new XMLHttpRequest();
+
+            function hasOneDayPassed(){ 
+                var date = new Date().toLocaleDateString(); 
+                if( localStorage.yourapp_date == date ) return false;
+                
+                localStorage.yourapp_date = date; 
+                return true;
+            }
+
+            xhr.open('GET', 'http://mtaapi.herokuapp.com/api?id=F27N');
+            xhr.onload = function() {
+                let arr = JSON.parse(xhr.responseText).result.arrivals.sort();
+                let filteredArray = arr.filter(function(item, pos){ 
+                    return arr.indexOf(item)== pos; 
+                });
+                getTimes(filteredArray);
+                setInterval(function(){getTimes(filteredArray)}, 30000);
+            };
+            xhr.send();
+
+        function getTimes(arr) { 
+            let time = new Date(); 
+            let hours = time.getHours(); 
+            let mins = time.getMinutes(); 
+            let secs = time.getSeconds();
+            let arr2 = []; 
+            for(var i = 0; i < arr.length; i++) { 
+                if (arr[i].substring(0,2)>= hours && arr[i].substring(3,5) >= mins && arr2.length <= 10) {
+                    arr2.push(arr[i]);
+                }
+            }
+
+            let res = arr2.join("<br> ");
+            document.getElementsByClassName('text')[0].innerHTML = res;
+        }
+    </script>
+</body>
+
+</html>
